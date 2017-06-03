@@ -14,8 +14,14 @@
 
                 <div class="panel-body">
                     <p>{{$service->description}}</p>
+                    <br>
+                    <div>
+                        <div class="pull-left"><a href="?date={{Carbon\Carbon::parse($date)->subDays($days)->toDateString()}}&days={{$days}}">Previous</a></div>
+                        <div class="pull-right"><a href="?date={{Carbon\Carbon::parse($date)->addDays($days)->toDateString()}}&days={{$days}}">Next</a></div>
+                    </div>
+                    <br><br>
                     <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-                    @foreach($service->generateAvailabilities() as $k => $v)
+                    @foreach($availabilities as $k => $v)
                     <div class="panel panel-default">
                         <div class="panel-heading" role="tab" id="heading{{$k}}">
                             <h4 class="panel-title">
@@ -32,7 +38,7 @@
                         <div id="collapse{{$k}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading{{$k}}">
                             <div class="panel-body">
                                 @foreach($v as $kk => $vv)
-                                    <div><a href=''>{{$vv[0]->format('g:i')}} - {{$vv[1]->format('g:i a')}}</a></div>
+                                    <div><a href="{{route('new_appointment',['service_id'=>$service->id,'date'=>$k,'time'=>$vv[0]->format('g:i')])}}">{{$vv[0]->format('g:i')}} - {{$vv[1]->format('g:i a')}}</a></div>
                                 @endforeach
                             </div>
                         </div>
@@ -40,6 +46,7 @@
                     @endforeach
                     </div>
                 </div>
+                
 
             </div>
         </div>

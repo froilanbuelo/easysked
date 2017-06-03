@@ -52,9 +52,22 @@ class Service extends Model
         for($i = 0; $i < $p_numberOfDays; $i++){
             $k = $date->toDateString();
             $schedules = $this->schedules()->forDate($date->toDateString())->get();
+            $previousScheduleStart = null;
+            $previousScheduleEnd = null;
             if (count($schedules) > 0 ){
                 foreach($schedules as $schedule){
                     $arrayStartAndEnd = array();
+                    if (is_null($previousScheduleStart) && is_null($previousScheduleEnd)){
+                        $previousScheduleStart = $schedule->start_time;
+                        $previousScheduleEnd = $schedule->end_time;
+                    }else{
+                        if ($schedule->start_time < $previousScheduleEnd){
+                            $schedule->start_time = $previousScheduleEnd;
+                        }
+                        if ($schedule->end_time < $previousScheduleEnd){
+                            $schedule->end_time = $previousScheduleEnd;
+                        }
+                    }
 
                     $start = Carbon::parse($date->toDateString().' '.$schedule->start_time);
                     $end = Carbon::parse($date->toDateString().' '.$schedule->end_time);
@@ -134,6 +147,18 @@ class Service extends Model
         }
         // dd($schedulesArray);
         return $schedulesArray;
+    }
+    public function isAvailableOnDateTime($date, $time){
+        $availabilities = $this->generateAvailabilities($date, 1);
+        // dd($availabilities);
+        if (array_key_exists($date, $availabilities)){
+            foreach ($availabilities as $k => $v){
+                if (array_key_exists($time, $v)){
+                    return true;
+                }
+            }    
+        }
+        return false;
     }
     // public function generateAvailabilities($p_date = null, $p_numberOfDays = 7){
     // 	if (is_null($p_date)){

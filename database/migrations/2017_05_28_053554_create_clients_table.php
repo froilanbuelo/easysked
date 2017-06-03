@@ -17,7 +17,7 @@ class CreateClientsTable extends Migration
             $table->increments('id');
             $table->string('name');
             $table->string('email');
-            $table->text('note');
+            $table->text('note')->nullable();
             $table->integer('appointment_id')->unsigned();
             $table->integer('user_id')->unsigned()->nullable();
             $table->timestamps();

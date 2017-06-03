@@ -9,7 +9,9 @@
 
                 <div class="panel-body">
                     @foreach($user->services as $service)
+                    <div>
                     {{$service->name}} <a href="{{route('service_profile',[$user->username,$service->url])}}"> ({{$service->duration}} mins)</a>
+                    </div>
                     @endforeach
                 </div>
             </div>

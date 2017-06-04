@@ -21,6 +21,9 @@ class Service extends Model
     public function appointments(){
         return $this->hasMany('App\Appointment');
     }
+    public function questions(){
+        return $this->hasMany('App\Question');
+    }
     public function isAvailableOnDay($p_day){
     	return strpos($this->days, "$p_day") !== FALSE;
     }

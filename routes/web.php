@@ -17,9 +17,11 @@ Route::get('/', function () {
 
 
 Auth::routes();
-// Route::group(['prefix' => 'manage'], function () {
-    Route::resource('users', 'UserController');
-// });
+Route::group(['prefix' => 'manage'], function () {
+    Route::resource('user', 'UserController');
+    Route::resource('service', 'ServiceController');
+    Route::resource('appointment', 'AppointmentController');
+});
 Route::get('reservation', 'AppointmentController@create')->name('new_appointment');
 Route::post('reservation', 'AppointmentController@store')->name('new_appointment_save');
 

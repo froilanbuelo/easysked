@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\User;
+use App\Http\Requests\ServiceStoreRequest;
+use App\Service;
+use Auth;
 use Illuminate\Http\Request;
+use Kris\LaravelFormBuilder\FormBuilder;
 
-class UserController extends Controller
+class ServiceController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,8 +17,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::orderBy('name')->paginate(30);
-        return view('user.index',compact('users'));
+        //
     }
 
     /**
@@ -23,9 +25,13 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(FormBuilder $formBuilder)
     {
-        //
+        $form = $formBuilder->create('App\Forms\ServiceForm', [
+            'method' => 'POST',
+            'url' => route('service.store')
+        ]);
+        return view('service.create',compact('form'));
     }
 
     /**
@@ -34,9 +40,20 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ServiceStoreRequest $request)
     {
-        //
+        $service = Service::create([
+            'name' => $request->get('name'),
+            'description' => $request->get('description'),
+            'url' => $request->get('url'),
+            'duration' => $request->get('duration'),
+            'buffer_before' => $request->get('buffer_before'),
+            'buffer_after' => $request->get('buffer_after'),
+            'limit' => $request->get('limit'),
+            'user_id' => Auth::user()->id,
+        ]);
+        // Auth::user()->services()->save($service);
+        return redirect()->action('ServiceController@show',$service->id);
     }
 
     /**
@@ -47,11 +64,8 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        $user = User::findOrFail($id);
-        if (!$user){
-            abort(405);
-        }
-        return view('profile',compact('user'));
+        $service = Service::with('owner')->findOrFail($id);
+        return view('service.show',compact('service'));
     }
 
     /**
